@@ -1,11 +1,12 @@
-/* 
-Cleaning Data in SQL Queries 
+/*
+Cleaning Data in SQL Queries
 */
-----------------------------------------------------------------------------
+
 SELECT *
 FROM [PortfolioProject].[dbo].[NashvilleHousing]
-
--- Standard Date Format ----------------------------------------------------
+	
+----------------------------------------------------------------------------------------------------------------
+-- Standard Date Format
 
 SELECT SaleDate, convert(date, SaleDate), SaleDateConverted
 FROM [PortfolioProject].[dbo].[NashvilleHousing]
@@ -15,7 +16,8 @@ Add SaleDateConverted Date;
 
 UPDATE NashvilleHousing
 SET SaleDateConverted = CONVERT(Date, SaleDate)
-
+	
+-----------------------------------------------------------------------------------------------------------------
 
 --Populate Property Address data
 SELECT *
@@ -38,14 +40,16 @@ JOIN NashvilleHousing b
 	ON a.ParcelID = b.ParcelID
 	AND a.[UniqueID ] <> b.[UniqueID ]
 WHERE a.PropertyAddress is null
+	
+-------------------------------------------------------------------------------------------------------
+--Breaking out Address into individual Columns (Address, City, State)
 
---Breaking out Address into individual Columns (Address, City, State)----------------------------
 Select PropertyAddress
 From NashvilleHousing
 
 Select PropertyAddress, 
-	   SUBSTRING(PropertyAddress,1,CHARINDEX(',', PropertyAddress)-1) as Address,
-	   SUBSTRING(PropertyAddress,CHARINDEX(',', PropertyAddress)+1, LEN(PropertyAddress)) as Address
+       SUBSTRING(PropertyAddress,1,CHARINDEX(',', PropertyAddress)-1) as Address,
+       SUBSTRING(PropertyAddress,CHARINDEX(',', PropertyAddress)+1, LEN(PropertyAddress)) as Address
 From NashvilleHousing;
 
 ALTER TABLE NashvilleHousing
@@ -77,7 +81,8 @@ SET OwnersSplitAddress = PARSENAME(REPLACE(OwnerAddress,',','.'),3),
     OwnersSplitCity = PARSENAME(REPLACE(OwnerAddress,',','.'),2),
 	OwnersSplitState = PARSENAME(REPLACE(OwnerAddress,',','.'),1)
 
-
+----------------------------------------------------------------------------------------------------------------
+	
 -- Change Y and N to Yes and No in "Sold as Vacant" field.
 Select DISTINCT(SoldAsVacant), COUNT(SoldAsVacant)
 FROM NashvilleHousing
@@ -97,11 +102,12 @@ SET SoldAsVacant = CASE WHEN SoldAsVacant ='Y' then 'Yes'
 					END
 
 
--- Remove Duplicates --------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+
+-- Remove Duplicates
 WITH RowNumCTE AS(
 SELECT *, 
-	ROW_NUMBER() OVER (
-		PARTITION BY ParcelID, 
+	ROW_NUMBER() OVER ( PARTITION BY ParcelID, 
 					 PropertyAddress, 
 					 SalePrice, 
 					 SaleDate, 
@@ -116,7 +122,7 @@ FROM RowNumCTE
 WHERE row_num >1
 ORDER BY PropertyAddress
 
-
+------------------------------------------------------------------------------------------------------------------
 
 -- Delete Unused Columns
 SELECT * 
