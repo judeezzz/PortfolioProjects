@@ -1,10 +1,10 @@
 --The main two tables-----------------------------------
 
 SELECT * 
-FROM PortfolioProject..CovidDeaths
+FROM PortfolioProject.dbo.CovidDeaths
 
 SELECT * 
-FROM PortfolioProject..CovidVaccinations
+FROM PortfolioProject.dbo.CovidVaccinations
 
 --------------------------------------------------------
 
